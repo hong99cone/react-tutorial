@@ -18,3 +18,35 @@ const element = <h1>hello, react element😵</h1>;
 
 
 * immutable object (불변 객체) : 객체 지향 프로그래밍에 있어서 생성 후에 상태를 바꿀 수 없는 객체   
+
+
+```javascript
+import React from 'react';
+
+// HTML과 구분되게 pascal case로 표기
+
+function App(props) {
+  // props : React 컴포넌트에 젅달된 모든 데이터
+  // HTML 요소는 attribute(속성)를 가지고 있고 React 컴포넌트는 props를 가지고 있음
+  // ex) porps = "value"
+  // props는 단방향(unidirectionial) only parent ▶ child
+
+  const subject = props.subject;
+
+  //  () 사용하는이유 : 가독성, 없어도 상관없음
+  return (
+    <div className="App">
+      <header className="App-header">
+        {/* src가{}안에 들어가있음, JSX가 변수를 인식하는 방법 */}
+        <p>
+          Hello {subject}!
+        </p>
+        
+      </header>
+    </div>
+  );
+}
+
+// App comnponent를 다른 module에서도 사용할수 있게함
+export default App;
+```

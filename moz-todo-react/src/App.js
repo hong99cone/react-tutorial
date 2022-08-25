@@ -1,33 +1,103 @@
-import React from "react";
+import {nanoid} from 'nanoid';
+import React, {useState} from "react";
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
 
 function App(props) {
+
+  const [filter, setFilter] = useState('All');
+
+  const FILTER_MAP = {
+    All: () => true,
+    Active: (task) => !task.completed,
+    Completed: (task) => task.completed
+  };
+  
+
+  const FILTER_NAMES = Object.keys(FILTER_MAP);
+
+
+  // props.task를 useState hooks에 전달해야함, 초기상태
+  const [tasks, setTasks] = useState(props.tasks);
+
   // props 는 부모에서 자식요소로만 전달되기 때문에 자식요소인 component에 있는 함수를 전달받아서 사용하기 위해선 콜백함수가 필요
   function addTask(name) {
-    alert(name);
+    const newTask = {id : `todo-${nanoid()}`, name, completed:false};
+    setTasks([...taskList, newTask]);
   }
 
-  const taskList = props.tasks?.map((task) => (
+
+  function toggleTaskCompleted(id) {
+    const updatedTasks = tasks.map((task) => {
+      // if this task has the same ID as the edited task (추가하는 할일의 data가 추가된 data와 같은 값을 가지고 있다면)
+      if(id === task.id) {
+        // use obj spread to make a new obj 뭐라는거야 새롭게 퍼진 오브젝트를 사용해라?
+        // whose 'completted' prop has been inverted
+        return {...task, completed: !task.completed}
+      }
+      return task;
+    })
+    setTasks(updatedTasks);
+  }
+
+  function deleteTask(id) {
+    const remainingTasks = tasks.filter((task) => id !== task.id);
+    setTasks(remainingTasks);
+  }
+
+  function editTask(id, newName) {
+    const editedTaskList = tasks.map((task) => {
+        // if this task has the same ID as the edited task
+        if (id === task.id) {
+            //
+
+            return {...task, name: newName}
+        }
+        return task;
+    })
+    setTasks(editedTaskList);
+}
+
+  const taskList = tasks
+  .filter(FILTER_MAP[filter])
+  .map((task) => (
     <Todo
       id={task.id}
       name={task.name}
       completed={task.completed}
       // 배열로 map 함수를 이용해서 JSX 리스트를 구현하기 위해선 key prop을 자식컴포넌트마다 넣어줘야 error 안뜸
-      key={task.id}
+      key= {task.id}
+      toggleTaskCompleted = {toggleTaskCompleted}
+      deleteTask = {deleteTask}
+      editTask = {editTask}
     />
   ));
+
+  const filterList = FILTER_NAMES.map((name) => (
+    <FilterButton
+     key={name} 
+     name={name}
+     isPressed = {name === filter}
+     setFilter = {setFilter}
+     />
+  ));
+  
+
+
+  const taskNoun = taskList.length !== 1 ? 'tasks' : 'task';
+  const headingText = `${taskList.length} ${taskNoun} remaining`;
+
+
+
   return (
     <div className="todoapp stack-large">
       <h1>🐱‍🏍Let's to do!🐱‍🏍</h1>
       <Form addTask={addTask} />
       <div className="filters btn-gruop stack-exception">
-        <FilterButton />
-        <FilterButton />
-        <FilterButton />
+        {filterList}
       </div>
-      <h2 id="list-heading">3 tasks remaning</h2>
+      <h2 id="list-heading">{headingText}</h2>
       <ul
         role="list"
         className="todo-list stack-large stack-exception"

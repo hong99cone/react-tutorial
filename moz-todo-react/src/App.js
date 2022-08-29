@@ -74,6 +74,8 @@ function App(props) {
     />
   ));
 
+  console.log(taskList.forEach((ele) => console.log(ele.key)));
+
   const filterList = FILTER_NAMES.map((name) => (
     <FilterButton
      key={name} 

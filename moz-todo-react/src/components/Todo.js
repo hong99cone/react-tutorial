@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 //  Components must always return something
 export default function Todo(props) {
-  
   const [newName, setNewName] = useState("");
+  const [isEditing, setEditing] = useState(false);
+
   function handleChange(e) {
     setNewName(e.target.value);
   }
@@ -14,7 +15,6 @@ export default function Todo(props) {
     setEditing(false);
 }
   
-  const [isEditing, setEditing] = useState(false);
 
   const editingTemplate = (
     <form className="stack-small" onSubmit={handleSubmit}>
@@ -46,6 +46,8 @@ export default function Todo(props) {
       </div>
     </form>
   );
+
+  
   const viewTemplate = (
     <div className="stack-small">
       <div className="c-cb">

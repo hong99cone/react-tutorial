@@ -1,4 +1,4 @@
-import {nanoid} from 'nanoid';
+import { nanoid } from "nanoid";
 import React, {useState} from "react";
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
@@ -7,6 +7,8 @@ import Todo from "./components/Todo";
 function App(props) {
 
   const [filter, setFilter] = useState('All');
+    // props.task를 useState hooks에 전달해야함, 초기상태
+    const [tasks, setTasks] = useState(props.tasks);
 
   const FILTER_MAP = {
     All: () => true,
@@ -18,13 +20,16 @@ function App(props) {
   const FILTER_NAMES = Object.keys(FILTER_MAP);
 
 
-  // props.task를 useState hooks에 전달해야함, 초기상태
-  const [tasks, setTasks] = useState(props.tasks);
+
 
   // props 는 부모에서 자식요소로만 전달되기 때문에 자식요소인 component에 있는 함수를 전달받아서 사용하기 위해선 콜백함수가 필요
   function addTask(name) {
-    const newTask = {id : `todo-${nanoid()}`, name, completed:false};
-    setTasks([...taskList, newTask]);
+    const newTask = {id: `todo-${nanoid()}`, name, completed:false};
+    setTasks((currentArray) => [ ...currentArray, newTask]);
+    // setTasks([...taskList, newTask]);
+    // setTasks([newTask, ...taskList]);
+
+    console.log(newTask);
   }
 
 
@@ -66,7 +71,6 @@ function App(props) {
       id={task.id}
       name={task.name}
       completed={task.completed}
-      // 배열로 map 함수를 이용해서 JSX 리스트를 구현하기 위해선 key prop을 자식컴포넌트마다 넣어줘야 error 안뜸
       key= {task.id}
       toggleTaskCompleted = {toggleTaskCompleted}
       deleteTask = {deleteTask}
@@ -74,7 +78,7 @@ function App(props) {
     />
   ));
 
-  console.log(taskList.forEach((ele) => console.log(ele.key)));
+  console.log(taskList);
 
   const filterList = FILTER_NAMES.map((name) => (
     <FilterButton
